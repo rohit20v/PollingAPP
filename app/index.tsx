@@ -1,10 +1,11 @@
 import {Alert, FlatList, Text, View} from "react-native";
 import style from "@/styles/Styles";
-import {Link, Stack} from "expo-router";
+import {Link, router, Stack} from "expo-router";
 import {AntDesign} from '@expo/vector-icons';
 import {useEffect, useState} from "react";
 import {supabase} from "@/lib/supabase";
 import {Poll} from "@/types/interfaces";
+
 
 export default function HomeScreen() {
 
@@ -12,17 +13,17 @@ export default function HomeScreen() {
 
     useEffect(() => {
         const fetchPolls = async () => {
-            let {data:polls, error} = await supabase
+            let {data: polls, error} = await supabase
                 .from('Polls')
                 .select('*')
-            if (error){
+            if (error) {
                 Alert.alert("Maintenance break!")
-            }else{
+            } else {
                 console.log(polls)
                 setPolls(polls as Poll[])
             }
         }
-        fetchPolls().then(r => console.log(r))
+        fetchPolls()
     }, [])
 
     return (
@@ -37,6 +38,10 @@ export default function HomeScreen() {
                         <AntDesign name="pluscircleo" size={24} color="white"/>
                     </Link>
                 )),
+                headerLeft: (() => (
+                    <AntDesign style={{margin: 8}} name="adduser" size={24} color="white"
+                               onPress={() => router.push("/login")}/>
+                ))
             }}/>
             <View
                 style={style.mainContainer}
