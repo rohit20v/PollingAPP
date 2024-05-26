@@ -1,10 +1,30 @@
-import {FlatList, Text, View} from "react-native";
+import {Alert, FlatList, Text, View} from "react-native";
 import style from "@/styles/Styles";
 import {Link, Stack} from "expo-router";
 import {AntDesign} from '@expo/vector-icons';
+import {useEffect, useState} from "react";
+import {supabase} from "@/lib/supabase";
+import {Poll} from "@/types/interfaces";
 
-const polls = [{id: 1}, {id: 2}, {id: 3}]
 export default function HomeScreen() {
+
+    const [polls, setPolls] = useState<Poll[]>([])
+
+    useEffect(() => {
+        const fetchPolls = async () => {
+            let {data:polls, error} = await supabase
+                .from('Polls')
+                .select('*')
+            if (error){
+                Alert.alert("Maintenance break!")
+            }else{
+                console.log(polls)
+                setPolls(polls as Poll[])
+            }
+        }
+        fetchPolls().then(r => console.log(r))
+    }, [])
+
     return (
         <>
             <Stack.Screen options={{
@@ -25,8 +45,8 @@ export default function HomeScreen() {
                 <FlatList
                     contentContainerStyle={{gap: 8}}
                     data={polls} renderItem={(poll) => (
-                    <Link style={style.pollsContainer} href={"/poll/" + poll.item.id}>
-                        <Text>{poll.item.id}. Yes or No</Text>
+                    <Link style={style.pollsContainer} href={"/poll/" + poll}>
+                        <Text>{poll.item.id}. {poll.item.question}</Text>
                     </Link>
 
                 )}>
