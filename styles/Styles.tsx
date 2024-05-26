@@ -28,7 +28,7 @@ export default StyleSheet.create({
     },
     choices: {
         backgroundColor: "white",
-        padding: 8,
+        padding: 12,
         borderRadius: 6,
         flexDirection: "row",
         gap: 10,
