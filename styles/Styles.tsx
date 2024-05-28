@@ -63,7 +63,6 @@ export default StyleSheet.create({
         alignItems: "center",
     },
     newPollBtn: {
-        backgroundColor: "orange",
         padding: 10,
         borderRadius: 16,
         width: "42%",
