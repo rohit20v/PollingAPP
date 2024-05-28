@@ -1,16 +1,45 @@
-import {Stack} from "expo-router";
+import {Redirect, router, Stack} from "expo-router";
 import {Alert, Text, TextInput, TouchableOpacity, View} from "react-native";
 import style from "@/styles/Styles"
 import {useState} from "react";
 import {AntDesign, Ionicons} from "@expo/vector-icons";
+import {useAuth} from "@/app/providers/AuthProvider";
+import {supabase} from "@/lib/supabase";
 
 const NewPoll = () => {
     const [created, setCreated] = useState("");
     const [options, setOptions] = useState(["", ""]);
     const [title, setTitle] = useState("");
 
-    const createPoll = () => {
-        setCreated((v) => "created")
+    const {user} = useAuth()
+
+    const createPoll = async () => {
+        if (!title) {
+            Alert.alert("Invalid insertion", "Please give your poll a title/question.")
+        } else {
+            for (const option of options) {
+                if (!option) {
+                    Alert.alert("Invalid insertion", "Please provide at least 2 options, and remove the empty options.")
+                    break
+                }
+            }
+        }
+
+        const {error} = await supabase
+            .from('Polls')
+            .insert([
+                {question: title, options},
+            ])
+            .select()
+
+        if (error){
+            Alert.alert("Database error", "Failed to create a poll")
+            console.log(error)
+            return
+        }
+        router.back()
+
+        setCreated("created")
     };
     const addOption = () => {
         if (options.length < 10)
@@ -36,6 +65,11 @@ const NewPoll = () => {
 
         }
     };
+
+    if (!user) {
+        Alert.alert("No access", ("User must be logged in to be able to create polls"))
+        return <Redirect href={"/login"}/>
+    }
 
     function updatedOption(index: number, o: string) {
         const updatedOps = [...options]
@@ -66,7 +100,7 @@ const NewPoll = () => {
                         options.map((option, index) => (
                             <View key={index} style={{justifyContent: "center"}}>
                                 <TextInput value={option}
-                                           onChangeText={o =>updatedOption(index, o)} style={style.newPollInput}
+                                           onChangeText={o => updatedOption(index, o)} style={style.newPollInput}
                                            placeholder={`Option ${index + 1}`}/>
                                 <Ionicons onPress={removeOption} style={{position: "absolute", right: 10}}
                                           name="remove-circle-outline" size={24} color="black"/>
@@ -75,7 +109,8 @@ const NewPoll = () => {
                     }
                 </View>
                 <View style={style.newPollBtnContainer}>
-                    <TouchableOpacity style={style.newPollBtn}>
+                    <TouchableOpacity onPress={createPoll}
+                                      style={[style.newPollBtn, {backgroundColor: created === "created" ? "#80694a" : "orange"}]}>
                         <Text style={{color: "white", fontSize: 16}}>Create new poll</Text>
                     </TouchableOpacity>
                 </View>
