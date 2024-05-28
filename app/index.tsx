@@ -40,7 +40,7 @@ export default function HomeScreen() {
                 )),
                 headerLeft: (() => (
                     <AntDesign style={{margin: 8}} name="adduser" size={24} color="white"
-                               onPress={() => router.push("/login")}/>
+                               onPress={() => router.push("/profile")}/>
                 ))
             }}/>
             <View
