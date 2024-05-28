@@ -1,6 +1,5 @@
 import React, {useState} from 'react'
 import {Alert, AppState, StyleSheet, Text, View} from 'react-native'
-import {Stack} from "expo-router";
 import {Button, Input} from '@rneui/themed'
 import {supabase} from "@/lib/supabase";
 
@@ -18,40 +17,45 @@ export default function Auth() {
 
     async function signInWithEmail() {
         setLoading(true)
-        const {error} = await supabase.auth.signInWithPassword({
-            email: email,
-            password: password,
-        })
+        const {error} = await supabase.auth.signInWithPassword({email, password})
 
-        if (error) Alert.alert(error.message)
+        if (error) {
+            Alert.alert("Ops!", error.message, [
+                {
+                    text: "OK",
+                }
+            ])
+        }
+        else {
+            Alert.alert("Success!", "Logged in successfully!", [
+                {
+                    text: "OK",
+                }
+            ])
+        }
         setLoading(false)
     }
 
     async function signUpWithEmail() {
         setLoading(true)
         const {
-            data: {session},
+            // data: {session},
             error,
-        } = await supabase.auth.signUp({
-            email: email,
-            password: password,
-        })
+        } = await supabase.auth.signUp({email, password})
 
-        if (error) Alert.alert(error.message)
-        if (!session) Alert.alert('Please check your inbox for email verification!')
+        if (error) {
+            Alert.alert("Ops!", error.message, [
+                {
+                    text: "OK",
+                }
+            ])
+        }
+        //else if (!session) Alert.alert('Please check your inbox for email verification!')
         setLoading(false)
     }
 
     return (
         <>
-            <Stack.Screen options={{
-                title: "User Authentication",
-                headerTintColor: "white",
-                headerTitleAlign: "center",
-                headerStyle: {
-                    backgroundColor: "#202020"
-                }
-            }}/>
             <View style={styles.container}>
                 <Text style={styles.lbl}> Login or Create an account</Text>
                 <View style={[styles.verticallySpaced, styles.mt20]}>
