@@ -64,7 +64,7 @@ const Id = () => {
             .select()
             .single()
         if (error) {
-            Alert.alert(error.message)
+            Alert.alert("Maintenance break!")
         } else {
             Alert.alert("Thanks for voting")
             setSubmit(true);
