@@ -7,7 +7,7 @@ import {useAuth} from "@/app/providers/AuthProvider";
 import {supabase} from "@/lib/supabase";
 
 const NewPoll = () => {
-    const [created, setCreated] = useState("");
+    const [created, setCreated] = useState<string>();
     const [options, setOptions] = useState(["", ""]);
     const [title, setTitle] = useState("");
 
@@ -16,23 +16,22 @@ const NewPoll = () => {
     const createPoll = async () => {
         if (!title) {
             Alert.alert("Invalid insertion", "Please give your poll a title/question.")
-        } else {
-            for (const option of options) {
-                if (!option) {
-                    Alert.alert("Invalid insertion", "Please provide at least 2 options, and remove the empty options.")
-                    break
-                }
-            }
+            return
+        }
+        const validOptions = options.filter(option => option !== "")
+        if (validOptions.length < 2) {
+            Alert.alert("Invalid insertion", "Please provide at least 2 options, and remove the empty options.")
+            return
         }
 
         const {error} = await supabase
             .from('Polls')
             .insert([
-                {question: title, options},
+                {question: title, options: validOptions},
             ])
             .select()
 
-        if (error){
+        if (error) {
             Alert.alert("Database error", "Failed to create a poll")
             console.log(error)
             return
