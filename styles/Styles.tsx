@@ -67,6 +67,9 @@ export default StyleSheet.create({
         borderRadius: 16,
         width: "42%",
         alignItems: "center"
+    },
+    profileContainer: {
+        padding: 16,
     }
 
 })
