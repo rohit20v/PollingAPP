@@ -1,21 +1,35 @@
-import {Button, Pressable, Text, View} from "react-native";
+import {ActivityIndicator, Alert, Button, Pressable, Text, View} from "react-native";
 import {Stack, useLocalSearchParams} from "expo-router";
 import style from "@/styles/Styles"
 import {Feather} from '@expo/vector-icons';
-import {useState} from "react";
+import {useEffect, useState} from "react";
+import {Poll} from "@/types/interfaces";
+import {supabase} from "@/lib/supabase";
 
-
-const poll = {
-    title: "YES?",
-    choices: [
-        "YES",
-        "NO"
-    ]
-}
 const Id = () => {
     const {id} = useLocalSearchParams<{ id: string }>()
     const [selected, setSelected] = useState("")
     const [submit, setSubmit] = useState(false)
+    const [poll, setPoll] = useState<Poll>()
+    useEffect(() => {
+        const fetchPoll = async () => {
+            let {data, error} = await supabase
+                .from('Polls')
+                .select('*')
+                .eq("id", Number(id))
+                .single()
+            if (error) {
+                Alert.alert(error.message)
+            }
+            setPoll(data)
+        };
+        fetchPoll()
+
+    }, [])
+
+    if (!poll) {
+        return <ActivityIndicator/>
+    }
 
 
     return (
@@ -27,9 +41,9 @@ const Id = () => {
                 headerTitleAlign: "center",
             }}/>
             <View style={style.pollContainer}>
-                <Text style={style.pollTitle}>{poll.title}</Text>
+                <Text style={style.pollTitle}>{poll.question}</Text>
                 <View style={style.choicesContainer}>
-                    {poll.choices.map(e => (
+                    {poll.options.map(e => (
                         <Pressable onPress={() => setSelected(e)} key={e} style={style.choices}>
                             <Feather name={e === selected ? "check-square" : "square"}
                                      size={18} color={e === selected ? "green" : "black"}/>

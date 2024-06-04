@@ -12,7 +12,7 @@ export default function HomeScreen() {
     const [polls, setPolls] = useState<Poll[]>([])
 
     useEffect(() => {
-        const fetchPolls = async () => {
+        (async () => {
             let {data: polls, error} = await supabase
                 .from('Polls')
                 .select('*')
@@ -22,8 +22,8 @@ export default function HomeScreen() {
                 console.log(polls)
                 setPolls(polls as Poll[])
             }
-        }
-        fetchPolls()
+        })()
+        // fetchPolls()
     }, [])
 
     return (
@@ -50,8 +50,8 @@ export default function HomeScreen() {
                 <FlatList
                     contentContainerStyle={{gap: 8}}
                     data={polls} renderItem={(poll) => (
-                    <Link style={style.pollsContainer} href={"/poll/" + poll}>
-                        <Text>{poll.item.id}. {poll.item.question}</Text>
+                    <Link style={style.pollsContainer} href={"/poll/" + poll.item.id}>
+                        <Text>{poll.item.question}</Text>
                     </Link>
 
                 )}>
