@@ -35,6 +35,7 @@ const Profile = () => {
                 ))
             }}/>
             <View style={style.profileContainer}>
+
                 <View style={{alignItems: "center", padding: 16, marginBottom: 16}}>
                     <Text onPress={colorEffect} style={{
                         fontWeight: "bold",

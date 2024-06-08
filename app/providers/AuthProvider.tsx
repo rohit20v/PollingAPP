@@ -18,6 +18,7 @@ const AuthProvider = ({children}: PropsWithChildren) => {
     useEffect(() => {
         supabase.auth.getSession().then(({ data: { session } }) => {
             setSession(session)
+            //TODO GUEST ACCOUNTS
         })
 
         supabase.auth.onAuthStateChange((_event, session) => {
